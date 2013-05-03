@@ -6,11 +6,7 @@ require 'unicode'
 # Here there are some tips to compare the result of libshorttext:
 # Why unigram is equal to words?? :S
 
-# -P 0 (no stopword removal, no stemming, unigram) corrispond to
-#
-# @options[:mode]   = "word"
-# @options[:stem]   = "false"
-# @options[:filter] = "false
+# -P 0 (no stopword removal, no stemming, unigram)
 
 
 class RubySVMPreprocessor
@@ -35,6 +31,7 @@ class RubySVMPreprocessor
   alias_method :push, :<<
 
   def toSVM(vector)
+    # the following line is made to have clean diff with libshorttext
     return "#{vector.first} " if vector.last.empty?
     features = vector.last.map {|h| "#{h.keys.first}:#{h[h.keys.first]}"}.join(" ")
     "#{vector.first}  #{features}"
