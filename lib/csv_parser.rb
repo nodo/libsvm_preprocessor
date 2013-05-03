@@ -21,7 +21,7 @@ OptionParser.new do |opts|
     options[:stopword] = w
   end
 
-  opts.on("-l", "--language", "Select your language [LANG]") do |l|
+  opts.on("-l [TYPE]", "--language", ['it', 'en'], "Select your language it / en") do |l|
     options[:lang] = l
   end
 
