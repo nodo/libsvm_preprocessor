@@ -28,6 +28,25 @@ describe RubySVMPreprocessor do
       result = preproc.toSVM(v)
       expect(result).to eq("0  1:3")
     end
+  end
+
+  context "when I am testing" do
+    it "ignore new words" do
+      v = preproc.push(["category", "bottiglia"], testing: true)
+      expect(v).to eq([0, []])
+    end
+
+    it "remembers the old ones" do
+      preproc.push(["category", "bottiglia"], testing: false)
+      v = preproc.push(["category", "bottiglia vetro"], testing: true)
+      expect(v).to eq([0, [{1 => 1}]])
+    end
+
+    it "produce svm format with blank features" do
+      v = preproc.push(["category", "bottiglia"], testing: true)
+      result = preproc.toSVM(v)
+      expect(result).to eq("0 ")
+    end
 
   end
 end

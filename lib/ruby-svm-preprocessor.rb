@@ -24,17 +24,18 @@ class RubySVMPreprocessor
     @current_category_id = -1
   end
 
-  def <<(data, options = {})
+  def <<(data, testing: false)
     category, string = data
     # If it is a new category I need to associate a new id
     if !@categories[category]
       @categories[category] = next_category_id
     end
-    vectorize(category, string, options)
+    vectorize(category, string, testing: testing)
   end
   alias_method :push, :<<
 
   def toSVM(vector)
+    return "#{vector.first} " if vector.last.empty?
     features = vector.last.map {|h| "#{h.keys.first}:#{h[h.keys.first]}"}.join(" ")
     "#{vector.first}  #{features}"
   end
@@ -48,9 +49,9 @@ class RubySVMPreprocessor
 
   private
 
-  def vectorize(category, string, options)
+  def vectorize(category, string, testing: false)
     tokens   = @tokenizer.tokenize(string)
-    features = @generator.features(tokens)
+    features = @generator.features(tokens, testing: testing)
     ids_with_frequency = count_frequency(features)
 
     [ @categories[category], ids_with_frequency ]
@@ -114,13 +115,13 @@ end
 
 class TokenMap
 
-  def initialize(options = {})
+  def initialize
     @hash_of_ngrams = {}
     @current_ngram_id = 0
   end
 
-  def token_map(ary_of_ngrams, options = {})
-    if !options[:testing]
+  def token_map(ary_of_ngrams, testing: false)
+    if !testing
       ary_of_ngrams.each { |ngram| @hash_of_ngrams[ngram] ||= next_ngram_id }
       ary_of_ngrams.map { |ngram| { @hash_of_ngrams[ngram] => ngram } }
     else
@@ -144,16 +145,18 @@ end
 class FeatureGenerator
 
   def initialize(options = {})
-    @token_map = TokenMap.new(options)
+    @token_map = TokenMap.new
     @options = options
     @options[:mode] ||= :unigram
   end
 
-  def features(ary_of_terms)
+  def features(ary_of_terms, testing: false)
     if @options[:mode] == :unigram
-      @token_map.token_map unigrams(ary_of_terms)
+      @token_map.token_map(unigrams(ary_of_terms), testing: testing)
     elsif @options[:mode] == :bigram
-      @token_map.token_map unigrams(ary_of_terms) + bigrams(ary_of_terms)
+      @token_map.token_map(unigrams(ary_of_terms) +
+                           bigrams(ary_of_terms),
+                           testing: testing)
     end
   end
 
