@@ -29,4 +29,23 @@ describe TokenMap do
     end
   end
 
+  context "if I am creating a test file" do
+    it "does not consider new terms" do
+      token_map.token_map([["bottiglia"],["di"],["plastica"]])
+      ngrams = token_map.token_map([["polenta"],["valsugana"]], testing: true)
+
+      expected = []
+      expect(ngrams).to eq(expected)
+    end
+
+    it "does not consider new terms but remembers the old ones" do
+      token_map.token_map([["bottiglia"],["di"],["plastica"]])
+      ngrams = token_map.token_map([["tappo"],["plastica"]], testing: true)
+
+      expected = [{3 => ["plastica"]}]
+      expect(ngrams).to eq(expected)
+    end
+
+  end
+
 end

@@ -25,7 +25,7 @@ CSV.foreach(input_train, OPTIONS_INPUT) do |row|
 end
 
 CSV.foreach(input_test, OPTIONS_INPUT) do |row|
-  vector = processor.toSVM(processor.push(row))
+  vector = processor.toSVM(processor.push(row, testing: true))
   output_test.puts vector
 end
 

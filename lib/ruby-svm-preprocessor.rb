@@ -24,13 +24,13 @@ class RubySVMPreprocessor
     @current_category_id = -1
   end
 
-  def <<(data)
+  def <<(data, options = {})
     category, string = data
     # If it is a new category I need to associate a new id
     if !@categories[category]
       @categories[category] = next_category_id
     end
-    vectorize(category, string)
+    vectorize(category, string, options)
   end
   alias_method :push, :<<
 
@@ -48,7 +48,7 @@ class RubySVMPreprocessor
 
   private
 
-  def vectorize(category, string)
+  def vectorize(category, string, options)
     tokens   = @tokenizer.tokenize(string)
     features = @generator.features(tokens)
     ids_with_frequency = count_frequency(features)
@@ -114,14 +114,23 @@ end
 
 class TokenMap
 
-  def initialize
+  def initialize(options = {})
     @hash_of_ngrams = {}
     @current_ngram_id = 0
   end
 
-  def token_map(ary_of_ngrams)
-    ary_of_ngrams.each { |ngram| @hash_of_ngrams[ngram] ||= next_ngram_id }
-    ary_of_ngrams.map { |ngram| { @hash_of_ngrams[ngram] => ngram } }
+  def token_map(ary_of_ngrams, options = {})
+    if !options[:testing]
+      ary_of_ngrams.each { |ngram| @hash_of_ngrams[ngram] ||= next_ngram_id }
+      ary_of_ngrams.map { |ngram| { @hash_of_ngrams[ngram] => ngram } }
+    else
+      ary_of_ngrams.map do |ngram|
+        { @hash_of_ngrams[ngram] => ngram }
+      end.select do |hash|
+        hash.keys.first
+      end
+    end
+
   end
 
   private
@@ -135,7 +144,7 @@ end
 class FeatureGenerator
 
   def initialize(options = {})
-    @token_map = TokenMap.new
+    @token_map = TokenMap.new(options)
     @options = options
     @options[:mode] ||= :unigram
   end
