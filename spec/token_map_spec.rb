@@ -1,5 +1,5 @@
 require 'rspec'
-require_relative './ruby-svm-preprocessor'
+require_relative '../lib/ruby-svm-preprocessor'
 
 describe TokenMap do
   let(:token_map) { TokenMap.new }
