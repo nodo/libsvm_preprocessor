@@ -3,11 +3,6 @@ require 'lingua/stemmer'
 require 'stopwords'
 require 'unicode'
 
-# Here there are some tips to compare the result of libshorttext:
-
-# -P 0 (no stopword removal, no stemming, unigram)
-# -P 1 (no stopword removal, no stemming, bigram)
-
 class RubySVMPreprocessor
   attr_reader :categories
 
