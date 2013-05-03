@@ -4,10 +4,9 @@ require 'stopwords'
 require 'unicode'
 
 # Here there are some tips to compare the result of libshorttext:
-# Why unigram is equal to words?? :S
 
 # -P 0 (no stopword removal, no stemming, unigram)
-
+# -P 1 (no stopword removal, no stemming, bigram)
 
 class RubySVMPreprocessor
   attr_reader :categories
