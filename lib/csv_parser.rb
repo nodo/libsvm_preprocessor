@@ -2,7 +2,7 @@ require 'csv'
 require_relative './ruby-svm-preprocessor'
 
 OPTIONS_INPUT  = { col_sep: "\t", headers: false }
-OUTPUT_DIR = '../output'
+OUTPUT_DIR = File.expand_path "~/Desktop/projects/ruby-svm-preprocessor/ruby-svm/output"
 
 if ARGV.size != 2
   puts "ruby csv_parser.rb <train> <test>"
@@ -25,8 +25,8 @@ CSV.foreach(input_train, OPTIONS_INPUT) do |row|
 end
 
 CSV.foreach(input_test, OPTIONS_INPUT) do |row|
-  vector = (processor.push(row, false))
-  output_test.puts processor.nice_string(vector)
+  vector = processor.toSVM(processor.push(row))
+  output_test.puts vector
 end
 
 output_train.close
