@@ -6,7 +6,26 @@ require 'unicode'
 class RubySVMPreprocessor
   attr_reader :categories
 
+  OPTIONS_MAP = {
+    0 => { lang: "it", mode: :unigram, stemming: false, stopword: false },
+    1 => { lang: "it", mode: :bigram, stemming: false, stopword: false },
+    2 => { lang: "it", mode: :unigram, stemming: true, stopword: false },
+    3 => { lang: "it", mode: :bigram, stemming: true, stopword: false },
+    4 => { lang: "it", mode: :unigram, stemming: false, stopword: true },
+    5 => { lang: "it", mode: :bigram, stemming: false, stopword: true },
+    6 => { lang: "it", mode: :unigram, stemming: true, stopword: true },
+    7 => { lang: "it", mode: :bigram, stemming: true, stopword: true },
+  }
+
+  def override_options(options)
+    OPTIONS_MAP[options[:numeric_type]]
+  end
+
   def initialize(options = {})
+    if options.keys.include?(:numeric_type)
+      options = override_options(options)
+    end
+
     @tokenizer  = Tokenizer.new(options)
     @generator  = FeatureGenerator.new(options)
 
