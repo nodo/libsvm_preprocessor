@@ -21,6 +21,15 @@ describe TokenMap do
     end
   end
 
+  context "it remembers old ids also with other trichars" do
+    it "maps new tokens" do
+      token_map.token_map([["abc"],["bc "],["c a"],[" ab"],["abc"]])
+      ngrams = token_map.token_map([["abc"],["c a"],["bot"]])
+      expected = [{1 => ["abc"]}, {3 => ["c a"]}, {5 => ["bot"]}]
+      expect(ngrams).to eq(expected)
+    end
+  end
+
   context "it ignores duplicates" do
     it "maps new tokens" do
       ngrams = token_map.token_map([["bottiglia"],["di"],["plastica"],["plastica"]])

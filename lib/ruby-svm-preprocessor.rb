@@ -5,30 +5,50 @@ require 'unicode'
 
 class RubySVMPreprocessor
   attr_reader :categories
+  attr_reader :instances
+  attr_reader :non_zero_features
 
   OPTIONS_MAP = {
-    0 => { lang: "it", mode: :unigram, stemming: false, stopword: false },
-    1 => { lang: "it", mode: :bigram, stemming: false, stopword: false },
-    2 => { lang: "it", mode: :unigram, stemming: true, stopword: false },
-    3 => { lang: "it", mode: :bigram, stemming: true, stopword: false },
-    4 => { lang: "it", mode: :unigram, stemming: false, stopword: true },
-    5 => { lang: "it", mode: :bigram, stemming: false, stopword: true },
-    6 => { lang: "it", mode: :unigram, stemming: true, stopword: true },
-    7 => { lang: "it", mode: :bigram, stemming: true, stopword: true },
+    0  => { lang: "it", mode: :unigram, stemming: false, stopword: false },
+    1  => { lang: "it", mode: :bigram, stemming: false, stopword: false },
+    2  => { lang: "it", mode: :unigram, stemming: true, stopword: false },
+    3  => { lang: "it", mode: :bigram, stemming: true, stopword: false },
+    4  => { lang: "it", mode: :unigram, stemming: false, stopword: true },
+    5  => { lang: "it", mode: :bigram, stemming: false, stopword: true },
+    6  => { lang: "it", mode: :unigram, stemming: true, stopword: true },
+    7  => { lang: "it", mode: :bigram, stemming: true, stopword: true },
+    8  => { lang: "it", mode: :trichar, stemming: true, stopword: true },
+    9  => { lang: "it", mode: :trichar, stemming: true, stopword: false },
+    10 => { lang: "it", mode: :trichar, stemming: false, stopword: true },
+    11 => { lang: "it", mode: :trichar, stemming: false, stopword: false },
   }
+
+  def hash_of_ngrams
+    @generator.hash_of_ngrams
+  end
 
   def override_options(options)
     OPTIONS_MAP[options[:numeric_type]]
+  end
+
+  def self.options_map(key)
+    OPTIONS_MAP[key].map { |k, v| "#{k}: #{v}"}.join(" | ")
+  end
+
+  def options
+    @options
   end
 
   def initialize(options = {})
     if options.keys.include?(:numeric_type)
       options = override_options(options)
     end
-
+    @options = options
+    @instances  = []
     @tokenizer  = Tokenizer.new(options)
     @generator  = FeatureGenerator.new(options)
 
+    @non_zero_features = 0
     @categories = {}
     @current_category_id = -1
   end
@@ -39,7 +59,10 @@ class RubySVMPreprocessor
     if !@categories[category]
       @categories[category] = next_category_id
     end
-    vectorize(category, string, testing: testing)
+    v = vectorize(category, string, testing: testing)
+    @instances << v
+    @non_zero_features += v.last.size
+    return v
   end
   alias_method :push, :<<
 
@@ -125,6 +148,8 @@ end
 
 class TokenMap
 
+  attr_reader :hash_of_ngrams
+
   def initialize
     @hash_of_ngrams = {}
     @current_ngram_id = 0
@@ -154,6 +179,10 @@ end
 
 class FeatureGenerator
 
+  def hash_of_ngrams
+    @token_map.hash_of_ngrams
+  end
+
   def initialize(options = {})
     @token_map = TokenMap.new
     @options = options
@@ -167,6 +196,18 @@ class FeatureGenerator
       @token_map.token_map(unigrams(ary_of_terms) +
                            bigrams(ary_of_terms),
                            testing: testing)
+    elsif @options[:mode] == :trichar
+      @token_map.token_map trichar(ary_of_terms)
+    end
+  end
+
+  def trichar(ary_of_terms)
+    string = ary_of_terms.join(" ")
+    string1 = string[0...-2].split(//)
+    string2 = string[1...-1].split(//)
+    string3 = string[2..-1].split(//)
+    string1.zip(string2).zip(string3).map do |x|
+      [x.flatten.join]
     end
   end
 
@@ -178,3 +219,4 @@ class FeatureGenerator
     ary[0...-1].zip(ary[1..-1])
   end
 end
+

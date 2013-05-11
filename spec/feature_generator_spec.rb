@@ -4,6 +4,7 @@ require_relative '../lib/ruby-svm-preprocessor'
 describe FeatureGenerator do
 
   let(:ary_of_terms) { ["a","b","c"] }
+  let(:ary) { ["mar","rosso"] }
 
   context "with default options" do
     let(:generator) { FeatureGenerator.new }
@@ -25,6 +26,21 @@ describe FeatureGenerator do
     it "use ingnore duplicates" do
       expected = [{1=>["a"]}, {1=>["a"]}, {2=>["a","a"]}]
       expect(generator.features(["a","a"])).to eq(expected)
+    end
+
+  end
+
+  context "using trichar" do
+    let(:generator) { FeatureGenerator.new(:mode => :trichar) }
+
+    it "use trichar" do
+      expected = [{1=>["mar"]}, {2=>["ar "]}, {3=>["r r"]}, {4=> [" ro"]}, {5=>["ros"]}, {6=>["oss"]}, {7=> ["sso"]}]
+      expect(generator.features(ary)).to eq(expected)
+    end
+
+    it "ignore duplicates" do
+      expected = [{1=>["aaa"]}, {1=>["aaa"]},{1=>["aaa"]}]
+      expect(generator.features(["aaaaa"])).to eq(expected)
     end
 
   end

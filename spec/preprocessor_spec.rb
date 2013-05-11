@@ -5,6 +5,7 @@ describe RubySVMPreprocessor do
 
   describe "default settings" do
     let(:preproc) { RubySVMPreprocessor.new }
+    let(:p_trichar) { RubySVMPreprocessor.new(mode: :trichar) }
 
     context "adding a text" do
       it "maps new categories" do
@@ -28,6 +29,13 @@ describe RubySVMPreprocessor do
         v = (preproc << ["category", "bottiglia bottiglia bottiglia"])
         result = preproc.toSVM(v)
         expect(result).to eq("0  1:3")
+      end
+    end
+
+    context "with trichar mode" do
+      it "produce a new vector with frequencies" do
+        v = (p_trichar << ["category", "osso osso"])
+        expect(v).to eq([0, [{1 => 2}, {2 => 2}, {3 => 1}, {4 => 1}, {5 => 1}]])
       end
     end
 
