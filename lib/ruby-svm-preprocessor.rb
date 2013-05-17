@@ -31,6 +31,10 @@ class RubySVMPreprocessor
     OPTIONS_MAP[options[:numeric_type]]
   end
 
+  def self.options_map_size
+    OPTIONS_MAP.size
+  end
+
   def self.options_map(key)
     OPTIONS_MAP[key].map { |k, v| "#{k}: #{v}"}.join(" | ")
   end
@@ -44,11 +48,17 @@ class RubySVMPreprocessor
       options = override_options(options)
     end
     @options = options
-    @instances  = []
     @tokenizer  = Tokenizer.new(options)
     @generator  = FeatureGenerator.new(options)
 
-    @non_zero_features = 0
+    @non_zero_features = {}
+    @non_zero_features[:testing]  = 0
+    @non_zero_features[:training] = 0
+
+    @instances  = {}
+    @instances[:testing]  = []
+    @instances[:training] = []
+
     @categories = {}
     @current_category_id = -1
   end
@@ -60,8 +70,13 @@ class RubySVMPreprocessor
       @categories[category] = next_category_id
     end
     v = vectorize(category, string, testing: testing)
-    @instances << v
-    @non_zero_features += v.last.size
+    if testing
+      @instances[:testing] << v
+      @non_zero_features[:testing] += v.last.size
+    else
+      @instances[:training] << v
+      @non_zero_features[:training] += v.last.size
+    end
     return v
   end
   alias_method :push, :<<
@@ -203,6 +218,9 @@ class FeatureGenerator
 
   def trichar(ary_of_terms)
     string = ary_of_terms.join(" ")
+    if string.size < 3
+      return [ [string] ]
+    end
     string1 = string[0...-2].split(//)
     string2 = string[1...-1].split(//)
     string3 = string[2..-1].split(//)

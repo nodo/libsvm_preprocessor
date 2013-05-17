@@ -43,6 +43,16 @@ describe FeatureGenerator do
       expect(generator.features(["aaaaa"])).to eq(expected)
     end
 
+    it "workarounds little word" do
+      expected = [{1 => ["te"]}]
+      expect(generator.features(["te"])).to eq(expected)
+    end
+
+    it "workarounds little words" do
+      expected = [{1 => ["te "]}, {2 => ["e n"]}, {3 => [" ne"]}]
+      expect(generator.features(["te", "ne"])).to eq(expected)
+    end
+
   end
 
 end
