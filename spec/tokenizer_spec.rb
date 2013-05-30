@@ -1,5 +1,5 @@
 require 'rspec'
-require_relative '../lib/ruby-svm-preprocessor'
+require 'libsvm_preprocessor/preprocessor'
 
 describe Tokenizer do
   let(:tokenizer) { Tokenizer.new }

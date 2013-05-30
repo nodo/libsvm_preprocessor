@@ -1,7 +1,6 @@
+# Mac
 .DS_Store
+
+# Emacs
 \#*
 *~
-test
-test.svm
-train
-train.svm

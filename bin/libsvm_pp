@@ -1,0 +1,28 @@
+#!/usr/bin/env ruby
+# encoding: utf-8
+
+if RUBY_VERSION < '2.0.0'
+  puts 'This gem supports only Ruby 2.0.0+'
+  exit 1
+else
+  $LOAD_PATH.unshift(File.dirname(File.realpath(__FILE__)) + '/../lib')
+
+  require 'csv'
+  require 'libsvm_preprocessor/preprocessor'
+  require 'libsvm_preprocessor/cli'
+
+  options = CLI.parse(ARGV)
+
+  preprocessor = Preprocessor.new(options)
+  preprocessor.use(ARGV[0], testing: options[:testing])
+end
+
+# output_dir = File.dirname(File.realpath(__FILE__)) + '/../output'
+# input_test  = ARGV[1]
+# output_test_path = "#{OUTPUT_DIR}/test.svm"
+# output_test  = File.open(output_test_path, "w")
+# CSV.foreach(input_test, OPTIONS_INPUT) do |row|
+#   vector = processor.toSVM(processor.push(row, testing: true))
+#   output_test.puts vector
+# end
+# output_test.close
