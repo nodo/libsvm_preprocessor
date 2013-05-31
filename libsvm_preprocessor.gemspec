@@ -17,6 +17,9 @@ Gem::Specification.new do |s|
   s.files            += Dir.glob("bin/**/*")
   s.files            += Dir.glob("spec/**/*")
 
+  s.add_dependency('stopwords-filter', '~> 0.2.1')
+  s.add_dependency('ruby-stemmer',     '~> 0.9.3')
+
   s.executables       = %w( libsvm_pp )
   s.description       = <<desc
     It's a text preprocessor that generate a libsvm input file

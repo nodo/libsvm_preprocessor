@@ -1,5 +1,4 @@
 require 'optparse'
-require 'ostruct'
 
 class CLI
 
