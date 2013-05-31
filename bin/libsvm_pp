@@ -13,6 +13,11 @@ else
 
   options = CLI.parse(ARGV)
 
+  if !File.exist? ARGV[0]
+    puts "Please insert a real input file."
+    exit 1
+  end
+
   preprocessor = Preprocessor.new(options)
   preprocessor.use(ARGV[0], testing: options[:testing])
 end

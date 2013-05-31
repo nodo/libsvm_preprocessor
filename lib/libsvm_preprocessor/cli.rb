@@ -5,12 +5,7 @@ class CLI
 
   def self.parse(args)
 
-    if !File.exist? args[0]
-      puts "Please insert a real input file."
-      exit 1
-    end
-
-    options = OpenStruct.new
+    options = {}
 
     options[:mode]         = :unigram
     options[:lang]         = :it
