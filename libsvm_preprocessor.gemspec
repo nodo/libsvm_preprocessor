@@ -6,7 +6,7 @@ Gem::Specification.new do |s|
   s.version           = LibsvmPreprocessor::VERSION
   s.date              = Time.now.strftime('%Y-%m-%d')
   s.summary           = "It's a text preprocessor that generate a libsvm input file"
-  s.homepage          = "http://github.com//libsvm_preprocessor"
+  s.homepage          = "http://github.com/nodo/libsvm_preprocessor"
   s.email             = "andrea.nodari91@gmail.com"
   s.authors           = [ "Andrea Nodari" ]
   s.license           = 'MIT'
