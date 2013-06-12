@@ -45,11 +45,14 @@ class Preprocessor
 
   def initialize(options = {})
     if options[:numeric_type]
-      options = override_options(options)
+      new_options = override_options(options)
+      @options = new_options.merge(output: options[:output])
+    else
+      @options = options
     end
-    @options = options
-    @tokenizer  = Tokenizer.new(options)
-    @generator  = FeatureGenerator.new(options)
+
+    @tokenizer  = Tokenizer.new(@options)
+    @generator  = FeatureGenerator.new(@options)
 
     @non_zero_features = {}
     @non_zero_features[:testing]  = 0
@@ -95,9 +98,10 @@ class Preprocessor
     return "#{v[0]} "
   end
 
-  def use(input_path, testing: false)
-    if @options[:output]
-      output_file = File.open(@options.output, "w")
+  def use(input_path, output_file=nil, testing: false)
+    puts "using #{@options}"
+    if output_file
+      output_file = File.open(output_file, "w")
       CSV.foreach(input_path, ::LibsvmPreprocessor::CSV_OPTIONS) do |row|
         output_file.puts toSVM( push(row, testing: testing) )
       end
