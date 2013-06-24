@@ -87,8 +87,13 @@ class Preprocessor
   def toSVM(vector)
     # the following line is made to have clean diff with libshorttext
     return "#{vector.first} " if vector.last.empty?
-    features = vector.last
-      .map {|h| "#{h.keys.first}:#{h[h.keys.first]}"}.join(" ")
+    features = vector.last.map {|h| "#{h.keys.first}:1"}.join(" ")
+
+    # With this lines it takes into account features (remove the
+    #      similar one above)
+
+    #.map {|h|
+    #      "#{h.keys.first}:#{h[h.keys.first]}"}.join(" ")
     "#{vector.first}  #{features}"
   end
 

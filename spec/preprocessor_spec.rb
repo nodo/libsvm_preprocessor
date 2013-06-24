@@ -25,10 +25,10 @@ describe Preprocessor do
         expect(v).to eq([0, [{1 => 3}]])
       end
 
-      it "produce svm format" do
+      it "produce svm format (without frequency)" do
         v = (preproc.push ["category", "bottiglia bottiglia bottiglia"])
         result = preproc.toSVM(v)
-        expect(result).to eq("0  1:3")
+        expect(result).to eq("0  1:1")
       end
     end
 
@@ -84,7 +84,7 @@ describe Preprocessor do
       it "produce svm format" do
         v = (preproc.push ["category", "bottiglia bottiglia bottiglia"])
         result = preproc.toSVM(v)
-        expect(result).to eq("0  1:3 2:2")
+        expect(result).to eq("0  1:1 2:1")
       end
     end
 
