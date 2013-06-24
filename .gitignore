@@ -4,3 +4,9 @@
 # Emacs
 \#*
 *~
+
+Gemfile.lock
+*.gem
+output/
+test
+train
