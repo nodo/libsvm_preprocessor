@@ -1,3 +1,4 @@
+require 'csv'
 require 'libsvm_preprocessor/tokenizer'
 require 'libsvm_preprocessor/token_map'
 require 'libsvm_preprocessor/feature_generator'
@@ -99,7 +100,6 @@ class Preprocessor
   end
 
   def use(input_path, output_file=nil, testing: false)
-    puts "using #{@options}"
     if output_file
       output_file = File.open(output_file, "w")
       CSV.foreach(input_path, ::LibsvmPreprocessor::CSV_OPTIONS) do |row|

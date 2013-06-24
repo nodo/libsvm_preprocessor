@@ -41,7 +41,7 @@ class CLI
         options[:lang] = l
       end
 
-      opts.on("-n N", Integer, "Numeric mode") do |n|
+      opts.on("-n N", Integer, "Numeric type") do |n|
         options[:numeric_type] = n
       end
 
